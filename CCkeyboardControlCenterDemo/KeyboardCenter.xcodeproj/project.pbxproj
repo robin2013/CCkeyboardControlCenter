@@ -14,7 +14,7 @@
 		A81767A71C802D11002DB1B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A81767A61C802D11002DB1B6 /* Assets.xcassets */; };
 		A81767AA1C802D11002DB1B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A81767A81C802D11002DB1B6 /* LaunchScreen.storyboard */; };
 		A81767B51C802D11002DB1B6 /* KeyboardCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A81767B41C802D11002DB1B6 /* KeyboardCenterTests.m */; };
-		A87864FA1C83EFC900B8D5C4 /* CCKeyboardControlCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A87864F91C83EFC900B8D5C4 /* CCKeyboardControlCenter.m */; };
+		A8449CBD1C869A1C0008554A /* CCKeyboardControlCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A8449CBC1C869A1C0008554A /* CCKeyboardControlCenter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,8 +41,8 @@
 		A81767B01C802D11002DB1B6 /* KeyboardCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeyboardCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A81767B41C802D11002DB1B6 /* KeyboardCenterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardCenterTests.m; sourceTree = "<group>"; };
 		A81767B61C802D11002DB1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A87864F81C83EFC900B8D5C4 /* CCKeyboardControlCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCKeyboardControlCenter.h; sourceTree = "<group>"; };
-		A87864F91C83EFC900B8D5C4 /* CCKeyboardControlCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCKeyboardControlCenter.m; sourceTree = "<group>"; };
+		A8449CBB1C869A1C0008554A /* CCKeyboardControlCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCKeyboardControlCenter.h; sourceTree = "<group>"; };
+		A8449CBC1C869A1C0008554A /* CCKeyboardControlCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCKeyboardControlCenter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +84,7 @@
 		A81767991C802D11002DB1B6 /* KeyboardCenter */ = {
 			isa = PBXGroup;
 			children = (
+				A8449CBA1C869A1C0008554A /* CCkeyboardControlCenter */,
 				A817679D1C802D11002DB1B6 /* AppDelegate.h */,
 				A817679E1C802D11002DB1B6 /* AppDelegate.m */,
 				A81767A01C802D11002DB1B6 /* ViewController.h */,
@@ -93,8 +94,6 @@
 				A81767A81C802D11002DB1B6 /* LaunchScreen.storyboard */,
 				A81767AB1C802D11002DB1B6 /* Info.plist */,
 				A817679A1C802D11002DB1B6 /* Supporting Files */,
-				A87864F81C83EFC900B8D5C4 /* CCKeyboardControlCenter.h */,
-				A87864F91C83EFC900B8D5C4 /* CCKeyboardControlCenter.m */,
 			);
 			path = KeyboardCenter;
 			sourceTree = "<group>";
@@ -114,6 +113,16 @@
 				A81767B61C802D11002DB1B6 /* Info.plist */,
 			);
 			path = KeyboardCenterTests;
+			sourceTree = "<group>";
+		};
+		A8449CBA1C869A1C0008554A /* CCkeyboardControlCenter */ = {
+			isa = PBXGroup;
+			children = (
+				A8449CBB1C869A1C0008554A /* CCKeyboardControlCenter.h */,
+				A8449CBC1C869A1C0008554A /* CCKeyboardControlCenter.m */,
+			);
+			name = CCkeyboardControlCenter;
+			path = ../../CCkeyboardControlCenter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,8 +225,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A87864FA1C83EFC900B8D5C4 /* CCKeyboardControlCenter.m in Sources */,
 				A81767A21C802D11002DB1B6 /* ViewController.m in Sources */,
+				A8449CBD1C869A1C0008554A /* CCKeyboardControlCenter.m in Sources */,
 				A817679F1C802D11002DB1B6 /* AppDelegate.m in Sources */,
 				A817679C1C802D11002DB1B6 /* main.m in Sources */,
 			);

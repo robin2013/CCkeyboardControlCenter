@@ -7,7 +7,7 @@
 //
 
 #import "CCKeyboardControlCenter.h"
-
+float const CCKeyboardControlMinHeight = 200.0;
 #import <UIKit/UIKit.h>
 @interface CCKeyboardControlCenter()
 @property(strong, nonatomic,readwrite) NSArray *fields;
@@ -18,7 +18,6 @@
 @property(assign, nonatomic) CGRect keyboardBeginRect;
 @property(assign, nonatomic) NSTimeInterval showAnimationTime;
 @property(assign, nonatomic) UIViewAnimationCurve showAnimationCurve;
-@property(strong, nonatomic) UIView *viewWaitToAdjust;
 
 - (void)subscribeNotifications;
 - (void)unsubscribeNotifications;
@@ -65,8 +64,7 @@
 #pragma mark - Subscribe And Unsubscribe
 - (void)subscribeNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
-    [center addObserver:self selector:@selector(keyboardWillBeShown:) name:UIKeyboardWillShowNotification object:nil];
+    [center addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
 }
 
 
@@ -167,6 +165,10 @@
 }
 
 #pragma mark - View Position
+- (BOOL)isValidKeyboardFrame:(CGRect)frame {
+    CGFloat height = CGRectGetHeight(frame);
+    return height > CCKeyboardControlMinHeight;
+}
 - (CGRect )unvisbaleRect {
     CGRect coverRect = (CGRect){self.keyboardEndRect.origin.x,
         self.keyboardEndRect.origin.y-self.offset,
@@ -189,51 +191,46 @@
 
 
 #pragma mark - KeyboardNotification
-
-- (void)keyboardWillBeShown:(NSNotification *)notification {
-    NSDictionary* userInfo = [notification userInfo];
+- (BOOL)resetKeyboardInfoWithDictionary:(NSDictionary *)userInfo {
     NSTimeInterval animationDuration;
     UIViewAnimationCurve animationCurve;
     
     [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
     [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&animationCurve];
-    
-    self.showAnimationTime = animationDuration;
-    self.showAnimationCurve =animationCurve;
-    self.keyboardBeginRect =[[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    self.keyboardEndRect =[[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    ;
-    if (self.viewWaitToAdjust) {
-        [self adjustRootViewForView:self.viewWaitToAdjust];
+    CGRect beginRect = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    CGRect endRect = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    if ([self isValidKeyboardFrame:beginRect]&&[self isValidKeyboardFrame:endRect]) {
+        self.showAnimationTime = animationDuration;
+        self.showAnimationCurve =animationCurve;
+        self.keyboardBeginRect =  beginRect;
+        self.keyboardEndRect =endRect;
+        return YES;
+    }
+    else {
+        self.keyboardBeginRect =  CGRectZero;
+        self.keyboardEndRect =CGRectZero;
+        self.showAnimationTime = 0;
+        self.showAnimationCurve =0;
+        return NO;
+    }
+
+}
+
+- (void)keyboardDidChangeFrame:(NSNotification *)notification {
+    NSDictionary* userInfo = [notification userInfo];
+    if ([self resetKeyboardInfoWithDictionary:userInfo]) {
+        [self adjustRootViewForView:[self currentTextField]];
     }
 }
-
-- (void)keyboardWillBeHidden:(NSNotification *)notification {
+- (void)keyboardWillChangeFrame:(NSNotification *)notification {
     NSDictionary* userInfo = [notification userInfo];
-    NSTimeInterval animationDuration;
-    UIViewAnimationCurve animationCurve;
-    
-    [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] getValue:&animationDuration];
-    [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] getValue:&animationCurve];
-    
-    self.showAnimationTime = animationDuration;
-    self.showAnimationCurve =animationCurve;
-    self.keyboardBeginRect =[[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    self.keyboardEndRect =[[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    ;
-    
+    if ([self resetKeyboardInfoWithDictionary:userInfo]) {
+        [self adjustRootViewForView:[self currentTextField]];
+    }
 }
-
 #pragma mark - Adjust
 - (void)focusOnView:(UIView *)view {
-    if (CGRectIsEmpty(self.keyboardEndRect) || CGRectIsEmpty(self.keyboardBeginRect)) {
-        self.viewWaitToAdjust = view;
-    } else {
-
         [self adjustRootViewForView:view];
-    }
-    
-    
 }
 
 - (void)adjustRootViewForView:(UIView *)view {
@@ -257,16 +254,11 @@
     CGFloat keyboardRange = CGRectGetMinY(self.keyboardBeginRect) - CGRectGetMinY(self.keyboardEndRect);
     
     CGFloat viewRange = bottomPoint.y - CGRectGetMinY(unvisbaleRect);
-    NSTimeInterval animationTime =self.viewWaitToAdjust? viewRange/keyboardRange*self.showAnimationTime:self.showAnimationTime;
-    
+    NSTimeInterval animationTime =keyboardRange*self.showAnimationTime;
     [self moveView:self.locationView
            toFrame:CGRectOffset(self.locationView.frame, 0, -viewRange)
 withAnimationCurve:self.showAnimationCurve
 withAnimationDuration:animationTime];
-    
-    if (self.viewWaitToAdjust) {
-        self.viewWaitToAdjust = nil;
-    }
 }
 /**
  *  向下适配控件
@@ -281,9 +273,6 @@ withAnimationDuration:animationTime];
            toFrame:CGRectOffset(self.locationView.frame, 0,screenRange)
 withAnimationCurve:self.showAnimationCurve
 withAnimationDuration:self.showAnimationTime];
-    if (self.viewWaitToAdjust) {
-        self.viewWaitToAdjust = nil;
-    }
 }
 
 - (void)moveView:(UIView*)view toFrame:(CGRect)frame
